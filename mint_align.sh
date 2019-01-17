@@ -175,18 +175,13 @@ samtools flagstat ${Sample}/${Sample}.bam > ${Sample}/outputMetrics/${Sample}.fl
 
 p1="${TMPDIR}/${Sample}/${Sample}.sorted.nodup.bam"
 
-o1=$(echo ${p1} | sed -r 's/\.bam$/.tagAlign.gz/g')
 
-o2=$(echo ${p1} | sed -r 's/\.bam$/.chipEncode.tagAlign.gz/g')
 
 o3=$(echo ${p1} | sed -r 's/\.bam$/.bedpe.gz/g')
 
-#o4=$(echo ${p1} | sed -r 's/\.bam$/.tn5.tagAlign.gz/g')
 
 
-bamToBed -i ${p1} | awk 'BEGIN{OFS="\t"} $6=="+" { $2=$2+4; $3=$3 ; $4="N" ; print $0} $6=="-"{ $2=$2; $3=$3-5; $4="N" ; print $0}' | gzip -c > ${o4}
 
-bedtools bamtobed -i ${p1} | awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}' | gzip -c > ${o2}
 
 bedtools bamtobed -bedpe -mate1 -i ${p1} | gzip -c > ${o3}
 
@@ -198,11 +193,6 @@ bedtools bamtobed -bedpe -mate1 -i ${p1} | gzip -c > ${o3}
 
 macs2 callpeak -t ${TMPDIR}/${Sample}/${Sample}.sorted.nodup.bam -f BAMPE -n ${Sample}/${Sample}.broad --broad -g hs --keep-dup all --broad-cutoff 0.1 --bdg --SPMR
 
-macs2 callpeak -t  $TMPDIR/${Sample}/${Sample}.sorted.nodup.bam -f BAMPE -n $TMPDIR/${Sample}/${Sample}.nps.broad -g hs --nomodel --shift 37 --extsize 73 --keep-dup all --broad --broad-cutoff 0.1 --bdg --SPMR
-
-
-
-#callPeaks.sh $TMPDIR/${Sample}/${Sample}.nodup.bedpe.gz ${Sample} $SPEC
 
 
 rsync -r -a -v $TMPDIR/${Sample} $FOLDERPATH/${Sample}
